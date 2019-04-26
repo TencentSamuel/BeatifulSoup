@@ -1,0 +1,25 @@
+from lxml import etree
+import requests
+import time
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
+
+def getHTML(url):
+    r = requests.get(url)
+    return r.content
+    
+with open('D:\chartz1.txt','w',encoding='utf-8') as f:
+    page=160
+    for a in range(page):
+        time.sleep(2)
+        url = 'https://www.taptap.com/app/85108/review?order=default&page={}#review-list'.format(a)
+        html = getHTML(url)
+        soup = BeautifulSoup(html,'html.parser') 
+        #comment_list=soup.find_all('li',class_="taptap-review-item collapse in")
+        comment_list=soup.find_all('div',class_="item-text-body")
+        #eachCommentList=''
+        #for item in comment_list:
+         #   if item.find_all('p')[0].string is not None:
+         #       eachCommentList+=item.find_all('p')[0].string     
+        print(comment_list)
+        f.write(str(comment_list))  

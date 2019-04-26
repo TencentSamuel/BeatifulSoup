@@ -1,25 +1,40 @@
 from lxml import etree
 import requests
 import time
+import random
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
 def getHTML(url):
     r = requests.get(url)
     return r.content
+
+def parseHTML(html):
+    html = getHTML(url)
+    soup = BeautifulSoup(html,'html.parser') 
+    comment_list=soup.find_all('div',class_="item-text-body")
+    #print(comment_list)
     
-page=3
-for a in range(2,page):
-    time.sleep(2)
+    eachCommentList = []
+    for item in comment_list:
+        each_ps = []
+        for ps in item.find_all('p'):
+            each_ps.append(ps.get_text())
+        eachCommentList = eachCommentList + each_ps
+    print("全部p: %s" % eachCommentList)
+    return eachCommentList
+    
+
+def writeTxt(file_name,data_list):
+    data=''
+    data+=str(data_list)
+    with open(file_name,'w',encoding='utf-8') as f:
+        f.write(data)
+
+page=5
+for a in range(page):
+    time.sleep(random.randint(0,5))
     url = 'https://www.taptap.com/app/85108/review?order=default&page={}#review-list'.format(a)
     html = getHTML(url)
-    
-    soup = BeautifulSoup(html,'html.parser') 
-    #comment_list=soup.find_all('li',class_="taptap-review-item collapse in")
-    comment_list=soup.find_all('div',class_="item-text-body")
-   #print(comment_list)
-    eachCommentList=''
-  
-    for item in comment_list:
-        eachCommentList+=item.find_all('p')[0].get_text()
-    print(eachCommentList)
+    data_list = parseHTML(html)    #修改
+    writeTxt('test.txt',data_list)
